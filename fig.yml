@@ -1,0 +1,36 @@
+db:
+    image: postgres
+redis:
+    image: redis
+cache:
+    image: sylvainlasnier/memcached
+web:
+    build: .
+    user: docker
+    command: python docklands/manage.py runserver 0.0.0.0:8000
+    volumes:
+        - .:/code
+    ports:
+        - "8000:8000"
+    links:
+        - db
+        - redis
+        - cache
+worker:
+    build: .
+    user: docker
+    command: python docklands/manage.py celery worker
+    volumes:
+        - .:/code
+    links:
+        - redis
+        - web
+beat:
+    build: .
+    user: docker
+    command: python docklands/manage.py celery beat 
+    volumes:
+        - .:/code
+    links:
+        - redis
+        - web
