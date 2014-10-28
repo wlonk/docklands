@@ -3,7 +3,7 @@ db:
 redis:
     image: redis
 cache:
-    image: sylvainlasnier/memcached
+    build: ./memcached/
 web:
     build: .
     user: docker
